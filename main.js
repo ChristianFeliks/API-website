@@ -16,15 +16,12 @@ app.use(express.static("public"));
 
 
 function getNames(arr) {
-    //! FOR SOME GODFORSAKEN REASON THIS DECLARATION CRASHES THE SITE IF IT'S INITIALIZED TO ""
-    //? IT TURNS OUT IT THE "/" ROUT HAS TO BE RUN AS WELL SO animeData IS CREATED AGAIN
-    let names_str = ""; 
+    let names_str = "";
     arr.forEach((item) => {
         names_str += item.name;
         names_str += ", ";
     });
     names_str =  names_str.slice(0, -2);
-    //console.log(names_str); 
     return names_str;
 };
 
@@ -32,19 +29,15 @@ app.get("/", async (req, res) => {
     console.log(API_URL);
     try{
         const result = await axios.get(API_URL);
-        animeData = result.data.data; //? first .data comes from axios, the other comes from JSON structure
-        //console.log(animeData[0]);
-		//console.log(getCurrentSeason());
+        animeData = result.data.data;
         res.render("index.ejs", {season: getCurrentSeason(),
             animeData: animeData,
             filter: filter
         });
     } catch (error){
         if (error.response) {
-            //* The error has a response property, so we can access the data
             res.render("index.ejs", { error: JSON.stringify(error.response.data) });
         } else {
-            //! The error does not have a response property (e.g., network error)
             res.render("index.ejs", { error: JSON.stringify(error.message) });
         }
     }
@@ -74,16 +67,13 @@ app.post("/submit", (req, res) => {
     API_URL = "https://api.jikan.moe/v4/top/anime?";
 
     if(req.body.type != ""){
-        //let type = `type=${req.body.type}`;
         API_URL += `type=${req.body.type}&`;
     }
     if(req.body.filter != ""){
-        //let type = `type=${req.body.filter}`;
         API_URL += `filter=${req.body.filter}&`;
         filter = req.body.filter;
     }
     if(req.body.ageRating != ""){
-        //let ageRating = `type=${req.body.ageRating}`;
         API_URL += `rating=${req.body.ageRating}&`;
     }
     res.redirect("/");
